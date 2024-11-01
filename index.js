@@ -1,11 +1,13 @@
 const { Client, GatewayIntentBits } = require('discord.js');
-const axios = require('axios'); // For making HTTP requests
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
+const axios = require('axios');
 
-// Replace with your Roblox ban API endpoint
-const robloxBanAPI = 'https://your-roblox-api-endpoint.com/ban';
+const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
-client.on('ready', () => {
+const client = new Client({
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
+});
+
+client.once('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
@@ -19,7 +21,7 @@ client.on('messageCreate', async (message) => {
         }
 
         try {
-            const response = await axios.post(robloxBanAPI, { playerName });
+            const response = await axios.post('http://localhost:3000/ban', { playerName });
             if (response.data.success) {
                 message.reply(`Player ${playerName} has been banned successfully.`);
             } else {
@@ -32,5 +34,5 @@ client.on('messageCreate', async (message) => {
     }
 });
 
-// Make sure to set your bot token in your environment variables
-client.login(process.env.DISCORD_TOKEN);
+// Log in to Discord with your app's token
+client.login(DISCORD_TOKEN);
